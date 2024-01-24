@@ -1,0 +1,142 @@
+import components.simplereader.SimpleReader;
+import components.simplereader.SimpleReader1L;
+import components.simplewriter.SimpleWriter;
+import components.simplewriter.SimpleWriter1L;
+import components.utilities.FormatChecker;
+
+/**
+ * This program calculates and shows the Hailstone series, beginning with a
+ * positive number you provide. After that, it asks if you'd like to do it again
+ * with a different number, and it keeps going until you decide not to continue.
+ *
+ * @author Aaron Zheng
+ *
+ */
+public final class Hailstone5 {
+
+    /**
+     * No argument constructor--private to prevent instantiation.
+     */
+    private Hailstone5() {
+    }
+
+    /**
+     * Generates and outputs the Hailstone series for a given starting integer.
+     * It also calculates the length and maximum value of the series.
+     *
+     * @param n
+     *            the starting integer
+     * @param out
+     *            the output stream
+     */
+    private static void generateSeries(int n, SimpleWriter out) {
+        int x = n;
+        final int three = 3;
+        out.print(n);
+        //Tracks length of series
+        int length = 1;
+        //Tracks max value of series
+        int max = 0;
+        while (x != 1) {
+            //If n is even, divide it by 2
+            if (x % 2 == 0) {
+                x = x / 2;
+
+                // If n is odd, multiply by 3 and add 1
+            } else {
+                x = (three * x) + 1;
+            }
+
+            //Update max if current value is greater
+            if (x > max) {
+                max = x;
+            }
+            out.print(", " + x);
+            // Increment the length of the series
+            length++;
+
+        }
+        out.println();
+        out.println("The length of the series is " + length);
+        out.println("The max value is " + max);
+
+    }
+
+    /**
+     * Repeatedly asks the user for a positive integer until a valid one is
+     * entered. Reads input as a string and checks if it's a valid integer and
+     * positive.
+     *
+     *
+     * @param in
+     *            the input stream
+     * @param out
+     *            the output stream
+     * @return a positive integer entered by the user
+     */
+    private static int getPositiveInteger(SimpleReader in, SimpleWriter out) {
+        // Initialize with an invalid value to enter the loop
+        int n = -1;
+
+        //Prompts user for integer
+        out.println("Give me an integer greater than zero please: ");
+
+        while (n <= 0) {
+            String s = in.nextLine();
+
+            //If s can be turned into an integer
+            if (FormatChecker.canParseInt(s)) {
+                n = Integer.parseInt(s);
+                //If n is less than or equal to zero, it prompts user again
+                if (n <= 0) {
+                    out.println(
+                            "That was not a positive integer, try again please: ");
+                }
+
+                //If s cannot be turned into an integer it will prompt user for
+                //input again. Example ("asd")
+            } else {
+                out.println("That was not a valid integer, try again please: ");
+            }
+        }
+
+        return n;
+    }
+
+    /**
+     * Main method.
+     *
+     * @param args
+     *            the command line arguments
+     */
+    public static void main(String[] args) {
+        SimpleReader in = new SimpleReader1L();
+        SimpleWriter out = new SimpleWriter1L();
+
+        //Prompts user for a positive integer
+        int n = getPositiveInteger(in, out);
+
+        //Generates series
+        generateSeries(n, out);
+
+        //Prompts user if they would like to repeat the Hailstone series
+        out.println(
+                "Type 'y' if you want to repeat, otherwise type any other letter: ");
+        String repeat = in.nextLine();
+
+        //Loops program until user doesn't want too
+        while (repeat.equals("y")) {
+            n = getPositiveInteger(in, out);
+
+            generateSeries(n, out);
+
+            //Prompts user if they want to repeat
+            out.println(
+                    "Type 'y' if you want to repeat, otherwise type any other letter: ");
+            repeat = in.nextLine();
+        }
+        in.close();
+        out.close();
+    }
+
+}
